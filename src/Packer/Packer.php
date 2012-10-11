@@ -120,9 +120,13 @@ class Packer {
      * @param resource $handle The file handle
      * @param string $key The key name
      * @param mixed $value The value to be written
+     * @param boolean $encode (optional) determine if an encoding operation 
+     *                  is required. Defaults to true.
      */
-    protected static function writeEntry($handle, $key, $value){
-        $value = json_encode($value);
+    protected static function writeEntry($handle, $key, $value, $encode = true){
+        if($encode){
+            $value = json_encode($value);
+        }
         fwrite($handle, pack('N*', strlen($key)));
         fwrite($handle, pack('N*', strlen($value)));
         fwrite($handle, $key);
@@ -207,8 +211,8 @@ class Packer {
                     self::writeEntry($tmp, $key, $value);
                 }
             }else{
-                $inputValue = json_decode(fread($this->handle, $valueLength));
-                self::writeEntry($tmp, $inputKey, $inputValue);
+                $inputValue = fread($this->handle, $valueLength);
+                self::writeEntry($tmp, $inputKey, $inputValue, false);
             }
             $this->index[$inputKey] = $startPos;
         }
