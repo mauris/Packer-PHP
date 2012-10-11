@@ -206,32 +206,30 @@ class Packer implements \ArrayAccess, \IteratorAggregate {
     protected function overwrite($key, $value = null){
         fseek($this->handle, 1);
         $tmp = tmpfile();
-        self::writeHeaderSignature($tmp);
-        $this->index = array();
-        while(!feof($this->handle)){
-            list($keyLength, $valueLength) = $this->readMeta();
-            if(feof($this->handle)){
-                break;
-            }
-            $startPos = ftell($tmp);
-            $inputKey = fread($this->handle, $keyLength);
-            if($inputKey == $key){
-                fseek($this->handle, $valueLength, SEEK_CUR);
-                if(func_num_args() == 2){
-                    self::writeEntry($tmp, $key, $value);
-                }
-            }else{
-                $inputValue = fread($this->handle, $valueLength);
-                self::writeEntry($tmp, $inputKey, $inputValue, false);
-            }
-            $this->index[$inputKey] = $startPos;
+        $startPos = $this->index[$key];
+        if($startPos - 1 > 0){
+            fwrite($tmp, fread($this->handle, $startPos - 1));
         }
-        ftruncate($this->handle, 0);
+        list($keyLength, $valueLength) = $this->readMeta();
+        if(func_num_args() == 2){
+            self::writeEntry($tmp, $key, $value);
+        }
+        $reindexpos = ftell($tmp) + 1;
+        $pos = ftell($this->handle) + $keyLength + $valueLength;
+        fseek($this->handle, 0, SEEK_END);
+        $end = ftell($this->handle);
+        if($end - $pos > 0){
+            fseek($this->handle, $pos);
+            fwrite($tmp, fread($this->handle, $end - $pos));
+        }
+        ftruncate($this->handle, 1);
         fseek($tmp, 0, SEEK_END);
         $length = ftell($tmp);
         fseek($tmp, 0);
         fwrite($this->handle, fread($tmp, $length));
         fclose($tmp);
+        fseek($this->handle, $reindexpos);
+        $this->index();
     }
     
     /**
