@@ -12,7 +12,7 @@ namespace Packer;
  * @package Packer
  * @since 1.0.0
  */
-class Packer {
+class Packer implements \ArrayAccess {
     
     /**
      * Header Signature
@@ -269,6 +269,49 @@ class Packer {
             $this->overwrite($key);
             unset($this->index[$key]);
         }
+    }
+    
+    /**
+     * 
+     * @param string $offset
+     * @return mixed
+     * @internal
+     * @ignore
+     */
+    public function offsetExists($offset) {
+        return $this->exist($offset);
+    }
+
+    /**
+     * 
+     * @param string $offset
+     * @return mixed
+     * @internal
+     * @ignore
+     */
+    public function offsetGet($offset) {
+        return $this->read($offset);
+    }
+
+    /**
+     * 
+     * @param string $offset
+     * @param mixed $value
+     * @internal
+     * @ignore
+     */
+    public function offsetSet($offset, $value) {
+        $this->write($offset, $value);
+    }
+
+    /**
+     * 
+     * @param string $offset
+     * @internal
+     * @ignore
+     */
+    public function offsetUnset($offset) {
+        $this->delete($offset);
     }
     
 }
