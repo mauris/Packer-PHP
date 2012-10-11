@@ -47,6 +47,11 @@ class PackerTest extends \PHPUnit_Framework_TestCase {
         $this->assertEquals(array('main'), $this->object->keys());
         $this->assertTrue($this->object->exist('main'));
         $this->assertEquals('existence', $this->object->read('main'));
+        
+        $this->object->clear();
+        $this->assertFalse($this->object->exist('main'));
+        $this->assertNull($this->object->read('main'));
+        $this->assertEquals(array(), $this->object->keys());
     }
     
 }
