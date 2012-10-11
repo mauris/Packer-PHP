@@ -17,29 +17,34 @@ class Packer {
     /**
      * Header Signature
      * determines that the file is a valid Packer file
+     * Decimal 181
      */
     const SIGNER = 0xB5;
     
     /**
      * The pathname to the file
+     * 
      * @var string
      */
     private $file;
     
     /**
      * The resource handle
+     * 
      * @var resource
      */
     private $handle;
     
     /**
      * The index array
+     * 
      * @var array
      */
     private $index = array();
     
     /**
      * Create a new Packer object
+     * 
      * @param string $file Path name to a Packer file. If file does not exist,
      *                     it will be created.
      */
@@ -51,6 +56,7 @@ class Packer {
     
     /**
      * Perform a Packfire file creation
+     * 
      * @param string $file Path name to the file to be created. 
      */
     protected static function createFile($file){
@@ -61,6 +67,7 @@ class Packer {
     
     /**
      * Check a Packer file to see if the file is valid
+     * 
      * @throws Exception Thrown when file is invalid.
      */
     protected function checkFile(){
@@ -92,6 +99,11 @@ class Packer {
         }
     }
     
+    /**
+     * Read the meta data (8 bytes) of the next entry
+     * 
+     * @return array Returns the data in array($keyLength, $valueLength)
+     */
     protected function readMeta(){
         $meta = fread($this->handle, 8);
         if($meta){
@@ -102,6 +114,13 @@ class Packer {
         }
     }
     
+    /**
+     * Write a new entry a file handle
+     * 
+     * @param resource $handle The file handle
+     * @param string $key The key name
+     * @param mixed $value The value to be written
+     */
     protected static function writeEntry($handle, $key, $value){
         $value = json_encode($value);
         fwrite($handle, pack('N*', strlen($key)));
@@ -110,6 +129,13 @@ class Packer {
         fwrite($handle, $value);
     }
     
+    /**
+     * Write an entry to Packer
+     * If the same key already exists in Packer, the key will be overwritten.
+     * 
+     * @param string $key The key to identify
+     * @param mixed $value The value to be written
+     */
     public function write($key, $value){
         if(array_key_exists($key, $this->index)){
             $this->overwrite($key, $value);
@@ -121,14 +147,31 @@ class Packer {
         }
     }
     
+    /**
+     * Get all the keys in the Packer file
+     * 
+     * @return array Returns a list of keys
+     */
     public function keys(){
         return array_keys($this->index);
     }
     
+    /**
+     * Check if a key exists in the Packer file
+     * 
+     * @param string $key The key to be checked
+     * @return boolean Returns true if the key exists, false otherwise.
+     */
     public function exist($key){
         return array_key_exists($key, $this->index);
     }
     
+    /**
+     * Read the data for a given key
+     * 
+     * @param string $key The key to retrieve the data
+     * @return mixed Returns the data read from the file
+     */
     public function read($key){
         if(array_key_exists($key, $this->index)){
             fseek($this->handle, $this->index[$key]);
@@ -138,6 +181,13 @@ class Packer {
         }
     }
     
+    /**
+     * Performs an overwrite operation by removing the entry then overwriting
+     * it with a different value.
+     * 
+     * @param string $key The key of the entry to be overwritten
+     * @param mixed $value (optional) The value to write over.
+     */
     protected function overwrite($key, $value = null){
         fseek($this->handle, 1);
         self::createFile($this->file . '.tmp');
@@ -185,6 +235,11 @@ class Packer {
         $this->release();
     }
     
+    /**
+     * Delete an entry from the Packer file
+     * 
+     * @param string $key Key of the entry to be removed.
+     */
     public function delete($key){
         if(array_key_exists($key, $this->index)){
             $this->overwrite($key);
