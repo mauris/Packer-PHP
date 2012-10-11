@@ -61,7 +61,7 @@ class Packer {
      */
     protected static function createFile($file){
         $handle = fopen($file, 'wb');
-        fwrite($handle, pack('C*', self::SIGNER));
+        self::writeHeaderSignature($handle);
         fclose($handle);
     }
     
@@ -83,7 +83,7 @@ class Packer {
                 throw new Exception('Not valid Packer file');
             }
         }else{
-            fwrite($this->handle, pack('C*', self::SIGNER));
+            self::writeHeaderSignature($this->handle);
         }
     }
     
@@ -135,6 +135,10 @@ class Packer {
         fwrite($handle, pack('N*', strlen($value)));
         fwrite($handle, $key);
         fwrite($handle, $value);
+    }
+    
+    protected static function writeHeaderSignature($handle){
+        fwrite($handle, pack('C*', self::SIGNER));
     }
     
     /**
@@ -202,7 +206,7 @@ class Packer {
     protected function overwrite($key, $value = null){
         fseek($this->handle, 1);
         $tmp = tmpfile();
-        fwrite($tmp, pack('C*', self::SIGNER));
+        self::writeHeaderSignature($tmp);
         $this->index = array();
         while(!feof($this->handle)){
             list($keyLength, $valueLength) = $this->readMeta();
