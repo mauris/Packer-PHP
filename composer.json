@@ -1,0 +1,7 @@
+{
+    "name": "mauris/packer",
+    "version": "1.0.0",
+    "autoload": {
+        "psr-0": {"Packer": "src/"}
+    }    
+}
