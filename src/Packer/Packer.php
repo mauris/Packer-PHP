@@ -77,9 +77,13 @@ class Packer {
         $this->handle = fopen($this->file, 'rb+');
         flock($this->handle, LOCK_SH);
         $data = fread($this->handle, 1);
-        $unpackedData = unpack('C*', $data);
-        if($unpackedData[1] != self::SIGNER){
-            throw new Exception('Not valid Packer file');
+        if($data){
+            $unpackedData = unpack('C*', $data);
+            if($unpackedData[1] != self::SIGNER){
+                throw new Exception('Not valid Packer file');
+            }
+        }else{
+            fwrite($this->handle, pack('C*', self::SIGNER));
         }
     }
     
@@ -194,9 +198,8 @@ class Packer {
      */
     protected function overwrite($key, $value = null){
         fseek($this->handle, 1);
-        self::createFile($this->file . '.tmp');
-        $tmp = fopen($this->file . '.tmp', 'rb+');
-        fseek($tmp, 1);
+        $tmp = tmpfile();
+        fwrite($tmp, pack('C*', self::SIGNER));
         $this->index = array();
         while(!feof($this->handle)){
             list($keyLength, $valueLength) = $this->readMeta();
@@ -216,12 +219,12 @@ class Packer {
             }
             $this->index[$inputKey] = $startPos;
         }
+        ftruncate($this->handle, 0);
+        fseek($tmp, 0, SEEK_END);
+        $length = ftell($tmp);
+        fseek($tmp, 0);
+        fwrite($this->handle, fread($tmp, $length));
         fclose($tmp);
-        $this->release();
-        unlink($this->file);
-        copy($this->file . '.tmp', $this->file);
-        unlink($this->file . '.tmp');
-        $this->checkFile();
     }
     
     /**

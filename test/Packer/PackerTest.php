@@ -28,68 +28,25 @@ class PackerTest extends \PHPUnit_Framework_TestCase {
         
     }
 
-    /**
-     * @covers Packer\Packer::write
-     */
-    public function testWrite() {
+    public function testFunc() {
+        $this->assertFalse($this->object->exist('test'));
         $this->object->write('test', 'write');
+        $this->assertFalse($this->object->exist('test2'));
+        $this->assertTrue($this->object->exist('test'));
+        $this->assertEquals('write', $this->object->read('test'));
+        $this->assertEquals(array('test'), $this->object->keys());
+        $this->object->write('main', 'existence');
+        
+        $this->object->write('test', 'sam');
+        $this->assertEquals('sam', $this->object->read('test'));
+        $this->assertEquals('existence', $this->object->read('main'));
+        
+        $this->object->delete('test');
+        $this->assertFalse($this->object->exist('test'));
+        $this->assertNull($this->object->read('test'));
+        $this->assertEquals(array('main'), $this->object->keys());
+        $this->assertTrue($this->object->exist('main'));
+        $this->assertEquals('existence', $this->object->read('main'));
     }
-
-    /**
-     * @covers Packer\Packer::keys
-     * @todo Implement testKeys().
-     */
-    public function testKeys() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Packer\Packer::exist
-     * @todo Implement testExist().
-     */
-    public function testExist() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Packer\Packer::read
-     * @todo Implement testRead().
-     */
-    public function testRead() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Packer\Packer::__destruct
-     * @todo Implement test__destruct().
-     */
-    public function test__destruct() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
-    /**
-     * @covers Packer\Packer::delete
-     * @todo Implement testDelete().
-     */
-    public function testDelete() {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-                'This test has not been implemented yet.'
-        );
-    }
-
+    
 }
-
-?>
