@@ -12,7 +12,7 @@ namespace Packer;
  * @package Packer
  * @since 1.0.0
  */
-class Packer implements \ArrayAccess {
+class Packer implements \ArrayAccess, \IteratorAggregate {
     
     /**
      * Header Signature
@@ -312,6 +312,16 @@ class Packer implements \ArrayAccess {
      */
     public function offsetUnset($offset) {
         $this->delete($offset);
+    }
+    
+    /**
+     * 
+     * @return \ArrayIterator
+     * @internal
+     * @ignore
+     */
+    public function getIterator() {
+        return new \ArrayIterator($this->keys());
     }
     
 }
