@@ -1,6 +1,31 @@
 {
     "name": "mauris/packer",
+    "description": "Simple Key-Value Packer Storage for PHP",
     "version": "1.0.0",
+    "homepage": "http://github.com/thephpdeveloper/Packer-PHP",
+    "type": "library",
+    "keywords": [
+      "database",
+      "key",
+      "hash",
+      "storage",
+      "memory"
+    ],
+    "authors":[
+        {
+            "name": "Sam-Mauris Yong",
+            "email": "mauris@hotmail.sg",
+            "homepage": "http://mauris.sg/",
+            "role": "Developer"
+        }
+    ],
+    "license": "BSD-3-Clause",
+    "time": "2012-10-11",
+    "support":{
+        "issues": "https://github.com/thephpdeveloper/Packer-PHP/issues",
+        "wiki": "https://github.com/thephpdeveloper/Packer-PHP/wiki",
+        "source": "https://github.com/thephpdeveloper/Packer-PHP"
+    },
     "autoload": {
         "psr-0": {"Packer": "src/"}
     }    
