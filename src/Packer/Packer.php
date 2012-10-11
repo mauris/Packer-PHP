@@ -243,6 +243,16 @@ class Packer {
     }
     
     /**
+     * Clear all entries from the Packer file
+     */
+    public function clear(){
+        // we truncate to 1 because we still want
+        // to keep that header signature.
+        ftruncate($this->handle, 1);
+        $this->index = array(); // clear index
+    }
+    
+    /**
      * Perform release and clean up for the Packer
      */
     public function __destruct(){
