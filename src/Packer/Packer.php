@@ -38,23 +38,37 @@ class Packer {
      */
     private $index = array();
     
+    /**
+     * Create a new Packer object
+     * @param string $file Path name to a Packer file. If file does not exist,
+     *                     it will be created.
+     */
     public function __construct($file){
         $this->file = $file;
         $this->checkFile();
         $this->index();
     }
     
+    /**
+     * Perform a Packfire file creation
+     * @param string $file Path name to the file to be created. 
+     */
     protected static function createFile($file){
         $handle = fopen($file, 'wb');
         fwrite($handle, pack('C*', self::SIGNER));
         fclose($handle);
     }
     
+    /**
+     * Check a Packer file to see if the file is valid
+     * @throws Exception Thrown when file is invalid.
+     */
     protected function checkFile(){
         if(!file_exists($this->file)){
             self::createFile($this->file);
         }
         $this->handle = fopen($this->file, 'rb+');
+        flock($this->handle, LOCK_SH);
         $data = fread($this->handle, 1);
         $unpackedData = unpack('C*', $data);
         if($unpackedData[1] != self::SIGNER){
@@ -62,6 +76,9 @@ class Packer {
         }
     }
     
+    /**
+     * Perform indexing of the file
+     */
     protected function index(){
         while(!feof($this->handle)){
             $startPos = ftell($this->handle);
@@ -146,11 +163,26 @@ class Packer {
             $this->index[$inputKey] = $startPos;
         }
         fclose($tmp);
-        fclose($this->handle);
+        $this->release();
         unlink($this->file);
         copy($this->file . '.tmp', $this->file);
         unlink($this->file . '.tmp');
         $this->checkFile();
+    }
+    
+    /**
+     * Perform a release by unlocking the file and closing file handle.
+     */
+    protected function release(){
+        flock($this->handle, LOCK_UN);
+        fclose($this->handle);
+    }
+    
+    /**
+     * Perform release and clean up for the Packer
+     */
+    public function __destruct(){
+        $this->release();
     }
     
     public function delete($key){
