@@ -171,7 +171,10 @@ class Packer {
      * @return boolean Returns true if the key exists, false otherwise.
      */
     public function exist($key){
-        return array_key_exists($key, $this->index);
+        if(is_string($key) || is_integer($key)){
+            return array_key_exists($key, $this->index);
+        }
+        return false;
     }
     
     /**
