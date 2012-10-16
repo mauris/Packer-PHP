@@ -1,6 +1,8 @@
 #Packer-PHP
 
-Simple Key-Value Packer Storage for PHP
+Simple Key-Value Storage for PHP. 
+
+Packer aims to be a zero-config, zero-install and works as PHP works library that developers can quickly pull into their project for use immediately for small and medium scaling usage. 
 
 [![Build Status](https://secure.travis-ci.org/thephpdeveloper/Packer-PHP.png)](http://travis-ci.org/thephpdeveloper/Packer-PHP)
 
@@ -10,7 +12,7 @@ To use Packer in your project, add a dependency to `mauris/packer` in your proje
 
     {
         "require": {
-            "mauris/packer": "1.0.0"
+            "mauris/packer": "1.0"
         }
     }
 
@@ -36,11 +38,13 @@ To write a key and value entry to the Packer file, simply use the `write($key, $
 
 ###Reading
 
-To fetch a value from a Packer, use the `read($key)` method.
+To fetch a value from a Packer file, use the `read($key)` method.
 
     $autorun = $packer->read('autorun');
 
 ###Deleting
+
+To delete a value from the Packer file:
 
     $packer->delete('autorun');
     // $packer->exist('autorun') === false
@@ -54,6 +58,12 @@ To iterate through the Packer file, you can fetch the keys using the `keys()` me
         echo '<li>' . $packer->read($key) . '</li>';
     }
     echo '</ul>';
+
+###Clearing
+
+    To remove all entries from the Packer file:
+
+    $packer->clear();
 
 ##License
 
