@@ -29,10 +29,10 @@ class PackerTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function testFunc() {
-        $this->assertFalse($this->object->exist('test'));
+        $this->assertFalse($this->object->exists('test'));
         $this->object['test'] = 'write';
-        $this->assertFalse($this->object->exist('test2'));
-        $this->assertTrue($this->object->exist('test'));
+        $this->assertFalse($this->object->exists('test2'));
+        $this->assertTrue($this->object->exists('test'));
         $this->assertEquals('write', $this->object->read('test'));
         $this->assertEquals(array('test'), $this->object->keys());
         $this->object->write('main', 'existence');
@@ -49,14 +49,14 @@ class PackerTest extends \PHPUnit_Framework_TestCase {
         
         unset($this->object['test']);
         $this->assertFalse(isset($this->object['test']));
-        $this->assertFalse($this->object->exist('test'));
+        $this->assertFalse($this->object->exists('test'));
         $this->assertNull($this->object->read('test'));
         $this->assertEquals(array('main'), $this->object->keys());
-        $this->assertTrue($this->object->exist('main'));
+        $this->assertTrue($this->object->exists('main'));
         $this->assertEquals('existence', $this->object->read('main'));
         
         $this->object->clear();
-        $this->assertFalse($this->object->exist('main'));
+        $this->assertFalse($this->object->exists('main'));
         $this->assertNull($this->object->read('main'));
         $this->assertEquals(array(), $this->object->keys());
     }
