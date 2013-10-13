@@ -21,8 +21,4 @@
         <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
     </logging>
 
-    <php>
-        <const name="__ENVIRONMENT__" value="test" />
-    </php>
-
 </phpunit>

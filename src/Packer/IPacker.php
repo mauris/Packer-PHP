@@ -1,8 +1,8 @@
 <?php
 namespace Packer;
 
-interface IPacker{
-
+interface IPacker
+{
     public function __construct($file);
 
     public function write($key, $value);
@@ -10,11 +10,10 @@ interface IPacker{
     public function keys();
 
     public function read($key);
-    
+
     public function exists($key);
-    
+
     public function delete($key);
 
     public function clear();
-
 }
