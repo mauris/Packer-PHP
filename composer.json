@@ -1,7 +1,7 @@
 {
     "name": "mauris/packer",
     "description": "Simple Key-Value Storage for PHP. dead simple.",
-    "homepage": "http://github.com/mauris\Packer-PHP",
+    "homepage": "http://github.com/mauris/Packer-PHP",
     "type": "library",
     "keywords": [
       "database",
